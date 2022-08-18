@@ -22,7 +22,7 @@
 
 
   <p align="center">
-    Preparing the test set for dose evaluation: from RTdicom & nifti to MatRAD 
+    Preparing the metrics for evaluation of 
 <a href="https://synthrad2023.grand-challenge.org/"><strong>SynthRAD2023 Grand Challenge</strong></a>
   <br />
     <a href="https://github.com/SynthRAD2023/metrics"><strong>Explore the docs »</strong></a>
@@ -57,9 +57,8 @@
 <!-- ABOUT THE PROJECT -->
 ## Goal
 
-Considering the ``.dcm`` of the MRI (or CBCT), CT of each patient, register to the CT reference grid
-after resampling and cropping to reduce the amount of data to be considered for the challenge.
-
+Assess the quality of the synthetic computed tomography (sCT) images
+against CT.
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -90,21 +89,21 @@ git clone git@github.com:SynthRAD2023/metrics.git
 ## Usage
 
 The main file ``.py`` is meant to:
-* Convert Dicom to nifti (MRI+CT);
+* Calculate the image similarity metrics;
 
 ### Functions Descriptions
 
 **a(input, output)**
 
 	description:
-	convert a dicom image to compressed nifti using SimpleITK
+	open nifti using SimpleITK and calculate ... metrics
 	
 	arguments:
-	input: folder containing dicom series (example 'C:\path\containing\Dicom_series')
-	output: output file path for compressed nifti (example: 'C:\path\to\folder\image.nii.gz')
+	input: file containing nifti file (example 'C:\path\containing\input.nii.gz')
+	output: output file path for list of metrics (example: 'C:\path\to\folder\ouput.csv')
 
 	command line usage:
-	python pre_process_tools.py convert_dicom_to_nifti --i 'C:\path\containing\Dicom_series' --o 'C:\path\to\folder\image.nii.gz'
+	python metrics.py ...'
 
 
 
