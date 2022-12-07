@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import numpuy as np
+import numpy as np
 from typing import Optional
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 
 
-def mae(ct: np.ndarray, sct: np.ndarray, mask: Optional[np.ndarray] = None) -> float:
+def mae(ct: np.ndarray, 
+        sct: np.ndarray,
+        mask: Optional[np.ndarray] = None) -> float:
     """
     Compute Mean Absolute Error (MAE)
 
@@ -35,8 +37,10 @@ def mae(ct: np.ndarray, sct: np.ndarray, mask: Optional[np.ndarray] = None) -> f
     return float(mae_value)
 
 
-
-def psnr(ct: np.ndarray, sct: np.ndarray, mask: Optional[np.ndarray] = None) -> float:
+def psnr(ct: np.ndarray, 
+         sct: np.ndarray,  
+         dynamic_range: Optional[int] = None,
+         mask: Optional[np.ndarray] = None) -> float:
     """
     Compute Peak Signal to Noise Ratio metric (PSNR)
 
@@ -46,6 +50,8 @@ def psnr(ct: np.ndarray, sct: np.ndarray, mask: Optional[np.ndarray] = None) -> 
         Ground truth (real CT).
     sct : np.ndarray
         Prediction (synthetic CT).
+    dynamic_range : int
+        Data range
     mask : np.ndarray, optional
         Mask for voxels to include. The default is None (including all voxels).
 
@@ -61,15 +67,19 @@ def psnr(ct: np.ndarray, sct: np.ndarray, mask: Optional[np.ndarray] = None) -> 
         #binarize mask
         mask = np.where(mask>0, 1., 0.)
         
+    if dynamic_range == None:
+        dynamic_range = ct.max()-ct.min()
+        
     # apply mask
     ct = ct[mask==1]
     sct = sct[mask==1]
-    psnr_value = peak_signal_noise_ratio(ct, sct, data_range=ct.max()-ct.min())
+    psnr_value = peak_signal_noise_ratio(ct, sct, data_range=dynamic_range)
     return float(psnr_value)
 
 
-
-def ssim(ct: np.ndarray, sct: np.ndarray) -> float:
+def ssim(ct: np.ndarray, 
+         sct: np.ndarray,
+         dynamic_range: Optional[int] = None) -> float:
     """
     Compute Structural Similarity Index Metric (SSIM)
 
@@ -79,6 +89,8 @@ def ssim(ct: np.ndarray, sct: np.ndarray) -> float:
         Ground truth (real CT).
     sct : np.ndarray
         Prediction (synthetic CT).
+    dynamic_range : int
+        Data range
 
     Returns
     -------
@@ -86,7 +98,9 @@ def ssim(ct: np.ndarray, sct: np.ndarray) -> float:
         structural similarity index metric.
 
     """
-    maxval = ct.max()-ct.min()
-    ssim_value = structural_similarity(ct, sct, data_range=maxval)
+    if dynamic_range == None:
+        dynamic_range = ct.max()-ct.min()
+        
+    ssim_value = structural_similarity(ct, sct, data_range=dynamic_range)
     return float(ssim_value)
 
