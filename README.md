@@ -65,13 +65,6 @@ against CT.
 
 To get a local copy up and running follow these simple steps.
 
-### Prerequisites
-
-* numpy
-```sh
-pip install numpy
-```
-
 
 ### Installation
 
@@ -84,29 +77,43 @@ or
 git clone git@github.com:SynthRAD2023/metrics.git
 ```
 
+### Prerequisites
+
+* numpy
+```sh
+pip install -r requirements.txt
+```
+
 <!-- USAGE EXAMPLES -->
 
 ## Usage
 
-The main file ``.py`` is meant to:
-* Calculate the image similarity metrics;
+The metrics are computed in two files: `image_metrics.py` and `dose_metrics.py`.
+These compute respectively,
+* The image similarity between the ground-truth CT and the synthetic CT. Thes metrics include the mean squared error (MSE), peak signal to noise ratio (PSNR), and structural similarity (SSIM).
+* The metrics to compare the dose delivered to the ground truth and the synthetic CT. These metrics include the mean absolute dose (MAE), dose-volume histogram difference (DVH), and the gamma pass rate. 
+
+
 
 ### Functions Descriptions
+In general, any function can be used in the following way.
 
 **a(input, output)**
 
 	description:
-	open nifti using SimpleITK and calculate ... metrics
+	compute the metric a (e.g., mse, psnr, ssim) between input and output
 	
 	arguments:
-	input: file containing nifti file (example 'C:\path\containing\input.nii.gz')
-	output: output file path for list of metrics (example: 'C:\path\to\folder\ouput.csv')
+	input: The numpy array of the ground-truth image
+	output: The numpy array of the predicted image
 
-	command line usage:
-	python metrics.py ...'
-
-
-
+All metrics can be computed by using the `score_patient`, which loads the data and returns all metrics:
+``` 
+    metrics = ImageMetrics()
+    ground_truth_path = "path/to/ground_truth.mha"
+    predicted_path = "path/to/prediction.mha"
+    print(metrics.score_patient(ground_truth_path, predicted_path))
+```
 <!-- ROADMAP -->
 ## Roadmap
 
