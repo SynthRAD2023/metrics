@@ -1,16 +1,55 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+import SimpleITK
+from evalutils.io import SimpleITKLoader
 import numpy as np
 from typing import Optional
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
+
 
 
 class ImageMetrics():
     def __init__(self):
         # TODO
         # Use population wide dynamic range
-        self.dynamic_range=2000 
+        self.dynamic_range = 3071 - -1024
+    
+    def score_patient(self, ground_truth_path, predicted_path):
+        loader = SimpleITKLoader()
+        gt = loader.load_image(ground_truth_path)
+        pred = loader.load_image(predicted_path)
+        
+        caster = SimpleITK.CastImageFilter()
+        caster.SetOutputPixelType(SimpleITK.sitkFloat32)
+        caster.SetNumberOfThreads(1)
+
+        gt = caster.Execute(gt)
+        pred = caster.Execute(pred)
+        
+        # Get numpy array from SITK Image
+        gt_array = SimpleITK.GetArrayFromImage(gt)
+        pred_array = SimpleITK.GetArrayFromImage(pred)
+        
+        mask_array = np.ones(gt_array.shape, dtype=gt_array.dtype)
+
+        # Calculate image metrics
+        mae_value = self.mae(gt_array, 
+                                        pred_array,
+                                        mask_array)
+        
+        psnr_value = self.psnr(gt_array, 
+                                          pred_array,
+                                          mask_array,
+                                          use_population_range=True)
+        
+        ssim_value = self.ssim(gt_array, 
+                                          pred_array, 
+                                          use_population_range=True)
+        return {
+            'mae': mae_value,
+            'ssim': ssim_value,
+            'psnr': psnr_value
+        }
     
     def mae(self,
             gt: np.ndarray, 
@@ -116,4 +155,9 @@ class ImageMetrics():
             
         ssim_value = structural_similarity(gt, pred, data_range=dynamic_range)
         return float(ssim_value)
-    
+
+if __name__=='__main__':
+    metrics = ImageMetrics()
+    ground_truth_path = "path/to/ground_truth.mha"
+    predicted_path = "path/to/prediction.mha"
+    print(metrics.score_patient(ground_truth_path, predicted_path))
