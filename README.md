@@ -58,7 +58,7 @@
 ## Goal
 
 Assess the quality of the synthetic computed tomography (sCT) images
-against CT.
+against CT. N.B. At the moment only the image similarity metrics are usable. Dose metrics will be updated when the validation phase is open.
 
 <!-- GETTING STARTED -->
 ## Getting Started
