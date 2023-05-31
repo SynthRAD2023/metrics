@@ -10,9 +10,8 @@ from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 
 class ImageMetrics():
     def __init__(self):
-        # TODO
-        # Use population wide dynamic range
-        self.dynamic_range = 3071 - -1024
+        # Use fixed wide dynamic range
+        self.dynamic_range = 2000 - -1000
     
     def score_patient(self, ground_truth_path, predicted_path):
         loader = SimpleITKLoader()
@@ -33,18 +32,18 @@ class ImageMetrics():
         mask_array = np.ones(gt_array.shape, dtype=gt_array.dtype)
 
         # Calculate image metrics
-        mae_value = self.mae(gt_array, 
-                                        pred_array,
-                                        mask_array)
+        mae_value = self.mae(gt_array,
+                             pred_array,
+                             mask_array)
         
-        psnr_value = self.psnr(gt_array, 
-                                          pred_array,
-                                          mask_array,
-                                          use_population_range=True)
+        psnr_value = self.psnr(gt_array,
+                               pred_array,
+                               mask_array,
+                               use_population_range=True)
         
-        ssim_value = self.ssim(gt_array, 
-                                          pred_array, 
-                                          use_population_range=True)
+        ssim_value = self.ssim(gt_array,
+                               pred_array, 
+                               use_population_range=True)
         return {
             'mae': mae_value,
             'ssim': ssim_value,
