@@ -13,10 +13,11 @@ class ImageMetrics():
         # Use fixed wide dynamic range
         self.dynamic_range = 2000 - -1000
     
-    def score_patient(self, ground_truth_path, predicted_path):
+    def score_patient(self, ground_truth_path, predicted_path, mask_path):
         loader = SimpleITKLoader()
         gt = loader.load_image(ground_truth_path)
         pred = loader.load_image(predicted_path)
+        mask = loader.load_image(mask_path)
         
         caster = SimpleITK.CastImageFilter()
         caster.SetOutputPixelType(SimpleITK.sitkFloat32)
@@ -24,13 +25,13 @@ class ImageMetrics():
 
         gt = caster.Execute(gt)
         pred = caster.Execute(pred)
+        mask = caster.Execute(mask)
         
         # Get numpy array from SITK Image
         gt_array = SimpleITK.GetArrayFromImage(gt)
         pred_array = SimpleITK.GetArrayFromImage(pred)
+        mask_array = SimpleITK.GetArrayFromImage(mask)
         
-        mask_array = np.ones(gt_array.shape, dtype=gt_array.dtype)
-
         # Calculate image metrics
         mae_value = self.mae(gt_array,
                              pred_array,
@@ -159,4 +160,5 @@ if __name__=='__main__':
     metrics = ImageMetrics()
     ground_truth_path = "path/to/ground_truth.mha"
     predicted_path = "path/to/prediction.mha"
-    print(metrics.score_patient(ground_truth_path, predicted_path))
+    mask_path = "path/to/mask.mha"
+    print(metrics.score_patient(ground_truth_path, predicted_path, mask_path))

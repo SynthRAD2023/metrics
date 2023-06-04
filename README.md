@@ -112,7 +112,8 @@ All metrics can be computed by using the `score_patient`, which loads the data a
     metrics = ImageMetrics()
     ground_truth_path = "path/to/ground_truth.mha"
     predicted_path = "path/to/prediction.mha"
-    print(metrics.score_patient(ground_truth_path, predicted_path))
+    mask_path = "path/to/mask.mha"
+    print(metrics.score_patient(ground_truth_path, predicted_path, mask_path))
 ```
 <!-- ROADMAP -->
 ## Roadmap
