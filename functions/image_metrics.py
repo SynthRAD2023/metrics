@@ -11,7 +11,7 @@ from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 class ImageMetrics():
     def __init__(self):
         # Use fixed wide dynamic range
-        self.dynamic_range = 2000 - -1000
+        self.dynamic_range = [-1024., 3000.]
     
     def score_patient(self, ground_truth_path, predicted_path, mask_path):
         loader = SimpleITKLoader()
@@ -101,6 +101,7 @@ class ImageMetrics():
             Mask for voxels to include. The default is None (including all voxels).
         use_population_range : bool, optional
             When a predefined population wide dynamic range should be used.
+            gt and pred will also be clipped to these values.
     
         Returns
         -------
@@ -115,7 +116,13 @@ class ImageMetrics():
             mask = np.where(mask>0, 1., 0.)
             
         if use_population_range:
-            dynamic_range = self.dynamic_range
+            dynamic_range = self.dynamic_range[1] - self.dynamic_range[0]
+            
+            # Clip gt and pred to the dynamic range
+            gt = np.where(gt < self.dynamic_range[0], self.dynamic_range[0], gt)
+            gt = np.where(gt > self.dynamic_range[1], self.dynamic_range[1], gt)
+            pred = np.where(pred < self.dynamic_range[0], self.dynamic_range[0], pred)
+            pred = np.where(pred > self.dynamic_range[1], self.dynamic_range[1], pred)
         else:
             dynamic_range = gt.max()-gt.min()
             
@@ -141,6 +148,7 @@ class ImageMetrics():
             Prediction
         use_population_range : bool, optional
             When a predefined population wide dynamic range should be used.
+            gt and pred will also be clipped to these values.
     
         Returns
         -------
@@ -149,7 +157,13 @@ class ImageMetrics():
     
         """
         if use_population_range:
-            dynamic_range = self.dynamic_range
+            dynamic_range = self.dynamic_range[1] - self.dynamic_range[0]
+            
+            # Clip gt and pred to the dynamic range
+            gt = np.where(gt < self.dynamic_range[0], self.dynamic_range[0], gt)
+            gt = np.where(gt > self.dynamic_range[1], self.dynamic_range[1], gt)
+            pred = np.where(pred < self.dynamic_range[0], self.dynamic_range[0], pred)
+            pred = np.where(pred > self.dynamic_range[1], self.dynamic_range[1], pred)
         else:
             dynamic_range = gt.max()-gt.min()
             
