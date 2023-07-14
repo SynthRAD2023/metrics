@@ -91,7 +91,7 @@ pip install -r requirements.txt
 The metrics are computed in two files: `image_metrics.py` and `dose_metrics.py`.
 These compute respectively,
 * The image similarity between the ground-truth CT and the synthetic CT. Thes metrics include the mean squared error (MSE), peak signal to noise ratio (PSNR), and structural similarity (SSIM).
-* The metrics to compare the dose delivered to the ground truth and the synthetic CT. These metrics include the mean absolute dose (MAE), dose-volume histogram difference (DVH), and the gamma pass rate. 
+* The metrics to compare the dose delivered to the ground truth and the synthetic CT. These metrics include the mean absolute dose (MAE), a dose-volume histogram (DVH) metric, and the gamma pass rate. 
 
 
 
@@ -108,6 +108,8 @@ In general, any function can be used in the following way.
 	output: The numpy array of the predicted image
 
 All metrics can be computed by using the `score_patient`, which loads the data and returns all metrics:
+
+**Image metrics**
 ``` 
     metrics = ImageMetrics()
     ground_truth_path = "path/to/ground_truth.mha"
@@ -115,6 +117,17 @@ All metrics can be computed by using the `score_patient`, which loads the data a
     mask_path = "path/to/mask.mha"
     print(metrics.score_patient(ground_truth_path, predicted_path, mask_path))
 ```
+
+**Dose metrics**
+``` 
+    dose_path = 'path/to/treatment_plans'
+    predicted_path = "path/to/prediction.mha"
+    patient_id="1BA000"
+    
+    metrics = DoseMetrics(dose_path)
+    print(metrics.score_patient(patient_id, predicted_path))
+```
+
 <!-- ROADMAP -->
 ## Roadmap
 
